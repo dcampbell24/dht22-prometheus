@@ -1,0 +1,10 @@
+[Unit]
+Description=Prometheus logging of the DHT22
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/dht22-prometheus
+
+[Install]
+WantedBy=multi-user.target

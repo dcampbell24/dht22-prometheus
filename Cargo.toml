@@ -1,0 +1,19 @@
+[package]
+name = "dht22-prometheus"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dht-embedded = "0.4"
+gpio-cdev = "0.6"
+linux-embedded-hal = "0.4"
+metrics = "0.22"
+metrics-exporter-prometheus = "0.14"
+# termion = "3"
+
+[package.metadata.deb]
+maintainer = "David Campbell <dcampbell24@gmail.com>"
+assets = [
+    ["target/release/dht22-prometheus", "usr/bin/", "755"],
+    ["dht22.service", "etc/systemd/system/", "755"],
+]
