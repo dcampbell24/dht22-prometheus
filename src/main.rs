@@ -1,4 +1,4 @@
-use std::{thread::sleep, time::Duration};
+use std::{net::{Ipv4Addr, SocketAddrV4}, thread::sleep, time::Duration};
 
 use dht_embedded::{Dht22, DhtSensor, NoopInterruptControl};
 use gpio_cdev::{Chip, LineRequestFlags};
@@ -8,9 +8,8 @@ use metrics_exporter_prometheus::PrometheusBuilder;
 
 fn main() {
     let builder = PrometheusBuilder::new();
-    // Defaults to enabled, listening at 0.0.0.0:9000
-    // TODO: change the port.
     builder
+        .with_http_listener(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), 9001))
         .install()
         .expect("failed to install recorder/exporter");
 
@@ -23,13 +22,12 @@ fn main() {
     let line = gpiochip.get_line(24).unwrap();
     let handle = line
         .request(
-            LineRequestFlags::INPUT | LineRequestFlags::OUTPUT,
+            LineRequestFlags::OPEN_DRAIN | LineRequestFlags::INPUT | LineRequestFlags::OUTPUT,
             1,
             "dht-sensor",
         )
         .unwrap();
     let pin = CdevPin::new(handle).unwrap();
-    // TODO: Note that, if your hardware supports it, you should set the GPIO pin to "open drain" mode.
     let mut sensor = Dht22::new(NoopInterruptControl, Delay, pin);
 
     loop {
